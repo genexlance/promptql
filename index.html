@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PromptQL API Documentation</title>
+  <style>
+    body { font-family: sans-serif; line-height: 1.6; padding: 2em; }
+    h1, h2 { color: #333; }
+    code { background: #eee; padding: 2px 4px; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>PromptQL API Documentation</h1>
+  <p>Welcome to the documentation for the PromptQL API.</p>
+
+  <h2>API Endpoint</h2>
+  <p>The main API endpoint is available at:</p>
+  <code>/api/promptql</code>
+
+  <h2>Usage</h2>
+  <p>To use the API, send a POST request to the endpoint with a JSON body.</p>
+  <p>Example request:</p>
+  <pre><code>
+curl -X POST https://your-netlify-site-name.netlify.app/.netlify/functions/promptql \\
+  -H 'Content-Type: application/json' \\
+  -d '{
+    "prompt": "Your prompt here"
+  }'
+  </code></pre>
+
+  <h2>Response</h2>
+  <p>The API will respond with a JSON object.</p>
+</body>
+</html> 
