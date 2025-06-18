@@ -4,32 +4,98 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PromptQL API Documentation</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;700&display=swap" rel="stylesheet">
   <style>
-    body { font-family: sans-serif; line-height: 1.6; padding: 2em; }
-    h1, h2 { color: #333; }
-    code { background: #eee; padding: 2px 4px; border-radius: 4px; }
+    body {
+      font-family: 'Jost', sans-serif;
+      line-height: 1.8;
+      padding: 2em;
+      background-color: #282a36;
+      color: #f8f8f2;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1, h2 {
+      color: #bd93f9;
+      border-bottom: 2px solid #44475a;
+      padding-bottom: 10px;
+    }
+    code {
+      background: #44475a;
+      color: #50fa7b;
+      padding: 3px 6px;
+      border-radius: 6px;
+      font-size: 0.9em;
+    }
+    pre {
+        background: #1e1f26;
+        color: #f8f8f2;
+        padding: 1.5em;
+        border-radius: 8px;
+        overflow-x: auto;
+        border: 1px solid #44475a;
+    }
+    pre code {
+        background: none;
+        padding: 0;
+        color: inherit;
+    }
   </style>
 </head>
 <body>
-  <h1>PromptQL API Documentation</h1>
-  <p>Welcome to the documentation for the PromptQL API.</p>
+  <div class="container">
+    <h1>PromptQL API Documentation</h1>
+    <p>Welcome to the documentation for the PromptQL API.</p>
 
-  <h2>API Endpoint</h2>
-  <p>The main API endpoint is available at:</p>
-  <code>/api/promptql</code>
+    <h2>API Endpoint</h2>
+    <p>The main API endpoint is available at:</p>
+    <code>/api/promptql</code>
 
-  <h2>Usage</h2>
-  <p>To use the API, send a POST request to the endpoint with a JSON body.</p>
-  <p>Example request:</p>
-  <pre><code>
-curl -X POST https://your-netlify-site-name.netlify.app/.netlify/functions/promptql \\
-  -H 'Content-Type: application/json' \\
+    <h2>Usage</h2>
+    <p>To use the API, send a POST request to the endpoint with a JSON body.</p>
+    <p>Example cURL request:</p>
+    <pre><code>curl -X POST https://promptql.genexmarketing.com/.netlify/functions/promptql \
+  -H 'Content-Type: application/json' \
   -d '{
     "prompt": "Your prompt here"
-  }'
-  </code></pre>
+  }'</code></pre>
 
-  <h2>Response</h2>
-  <p>The API will respond with a JSON object.</p>
+    <h2>WordPress Integration</h2>
+    <p>You can call the PromptQL API from your WordPress site using the `wp_remote_post` function. Here is an example of how you can do this from your theme's `functions.php` file or a custom plugin.</p>
+    <pre><code>&lt;?php
+function call_promptql_api( $prompt ) {
+    $url = 'https://promptql.genexmarketing.com/.netlify/functions/promptql';
+
+    $args = array(
+        'body'        => json_encode( array( 'prompt' => $prompt ) ),
+        'headers'     => array( 'Content-Type' => 'application/json' ),
+        'timeout'     => 60,
+    );
+
+    $response = wp_remote_post( $url, $args );
+
+    if ( is_wp_error( $response ) ) {
+        $error_message = $response->get_error_message();
+        return "Something went wrong: $error_message";
+    } else {
+        $body = wp_remote_retrieve_body( $response );
+        $data = json_decode( $body );
+        return $data;
+    }
+}
+
+// Example usage:
+$prompt_text = "Summarize this post for a tweet.";
+$result = call_promptql_api( $prompt_text );
+// var_dump( $result );
+?&gt;</code></pre>
+
+    <h2>Response</h2>
+    <p>The API will respond with a JSON object.</p>
+  </div>
 </body>
 </html> 
