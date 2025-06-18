@@ -12,5 +12,8 @@
   "description": "",
   "devDependencies": {
     "netlify-cli": "^22.1.3"
+  },
+  "dependencies": {
+    "node-fetch": "^2.7.0"
   }
 }
