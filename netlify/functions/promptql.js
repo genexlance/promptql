@@ -6,6 +6,7 @@ exports.handler = async function(event, context) {
         return {
             statusCode: 405,
             body: JSON.stringify({ error: 'Method Not Allowed' }),
+            headers: { 'Content-Type': 'application/json' },
         };
     }
 
@@ -15,19 +16,13 @@ exports.handler = async function(event, context) {
         return {
             statusCode: 500,
             body: JSON.stringify({ error: 'DEEPSEEK_API_KEY environment variable not set.' }),
+            headers: { 'Content-Type': 'application/json' },
         };
     }
 
     try {
-        const incomingData = JSON.parse(event.body);
-        const { model, messages } = incomingData;
-
-        if (!model || !messages) {
-            return {
-                statusCode: 400,
-                body: JSON.stringify({ error: 'Missing "model" or "messages" in the request body.' }),
-            };
-        }
+        // The entire body from the client will be forwarded to the Deepseek API.
+        const requestBody = event.body;
 
         const response = await fetch('https://api.deepseek.com/chat/completions', {
             method: 'POST',
@@ -35,27 +30,14 @@ exports.handler = async function(event, context) {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${deepseekApiKey}`,
             },
-            body: JSON.stringify({
-                model: model,
-                messages: messages,
-            }),
+            body: requestBody, // Pass the original request body directly
         });
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            console.error('Deepseek API Error:', errorData);
-            return {
-                statusCode: response.status,
-                body: JSON.stringify({ error: 'Error from Deepseek API', details: errorData }),
-            };
-        }
-
-        const data = await response.json();
-
+        // The response from Deepseek will be streamed back to the client.
         return {
-            statusCode: 200,
+            statusCode: response.status,
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
+            body: await response.text(),
         };
 
     } catch (error) {
@@ -63,6 +45,7 @@ exports.handler = async function(event, context) {
         return {
             statusCode: 500,
             body: JSON.stringify({ error: 'An internal error occurred.', details: error.message }),
+            headers: { 'Content-Type': 'application/json' },
         };
     }
 }; 
